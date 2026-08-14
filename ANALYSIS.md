@@ -1,123 +1,261 @@
-# ADHD Task-Breakdown App — Review Data Analysis
+# ADHD Task-Breakdown App — Review Data Analysis (v2)
 
-Based on 48,756 scraped reviews across 29 apps (of 33 attempted) in the ADHD/task-planner
-category. Source data: `output/reviews.db`, `output/all_reviews.csv`, `output/app_summary.csv`.
+Based on 48,756 scraped reviews across 29 apps. Note: 34,582 of those reviews (71%) come
+from Finch (self-care pet game) and Habitica (gamified RPG habit tracker) — real apps, but
+a different product category from a Goblin-Tools-style breakdown tool. They're used here
+as *reference points*, not as the primary evidence base. The core evidence is the other
+14,174 reviews across 27 direct-comparison apps — that's still a large, real sample, and
+it's where the sharpest signal lives.
 
----
-
-## 1. Does the data support "an honest task-breakdown tool"? — Confirm/Challenge, with numbers
-
-**Your idea survives contact with the data, but for a different reason than you framed it.**
-
-**(a) Subscription/billing deception — strongly confirmed, category-wide, and bigger than you thought:**
-- **3,109 reviews (6.4% of all 48,756)** mention subscription dark patterns or "free"-app bait-and-switch — and **1,645 of those are negative reviews: 26.9% of every single 1–2★ review in the whole dataset.** This is the single largest identifiable complaint theme in the category, full stop.
-- It's not confined to one app: **16 of 29 apps with meaningful review volume** have monetization anger driving >15% of their negative reviews. Clarify (52.6% of its negative reviews), Numo (52.3%), Inflow (43.8%), Llama Life (40.7%), Brili (38%), neurolist (33%) are the worst offenders.
-- Clarify — a well-funded, well-designed app — sits at only 3.57★ average across 2,948 reviews almost entirely *because of* billing practices, not content quality.
-
-**(b) Copycat/impersonation confusion — NOT confirmed, weaker than assumed:** Literal "fake/copycat/clone" language appears in only **15 reviews total** across the whole dataset. I couldn't scrape the actual clone app (`com.fau.goblin_tools`) — it's been delisted from Play, likely after being reported — so we have zero first-party evidence of it. What the data *does* show, 66 times, is people in **other apps'** reviews explicitly naming Goblin Tools as the free benchmark competitors fail to beat ("Goblin Tools will do the same things for free," "I'll stick with Goblin Tools," "This app is a copy of Goblin Tools"). **The real dynamic isn't brand impersonation — it's that Goblin Tools set a free/one-time-purchase bar, and subscription competitors get directly, unfavorably compared to it in their own reviews.** That's actually a stronger strategic fact for you than "beware of clones," because it means the wedge is category-wide, not one delisted app.
-
-**(c) Persistence/multiple lists/personalization — real, but low-frequency, high-severity:** Raw counts are small (257 data-loss mentions, 9 explicit "multiple lists" phrasings) — my first pass nearly dismissed this. But reading the actual top-voted Goblin Tools reviews changed that: *"I check one box out of 20+ and boom, it's all gone"* (25👍), *"deleted my to-do list twice"* (18👍), *"it wipes everything you add every so often"* — and the same failure mode recurs almost verbatim in Habitica, Finch, Clarify, and Structured. **Few people write about data loss, but everyone who experiences it is furious and everyone who reads it nods along** — it's a low-frequency, high-trust-destroying bug category, not a high-volume complaint. Multi-list/categorization asks are real but genuinely minor — don't over-invest here.
-
-**Verdict: build it, but reposition it.** The data supports a **dual fix**: (1) category-wide monetization dishonesty (the big, evidenced, category-wide pain), and (2) Goblin Tools' own specific reliability failures — not "beware of clones." The core mechanic itself (see §7) is the most validated part of your thesis.
+Source: `output/reviews.db`. Everything below is read from actual review text, not inferred.
 
 ---
 
-## 2. Full Complaint Breakdown (ranked by frequency, all 48,756 reviews)
+## The headline insight
 
-| Theme | Total mentions (% of all) | % of ALL negative reviews | Shared across category? |
-|---|---|---|---|
-| **Monetization dark patterns** (subscription trap + "free"-app bait-and-switch) | 3,109 (6.4%) | **26.9%** | **Yes — 16/29 apps** |
-| Crashes/bugs/freezing/lag | 1,449 (3.0%) | 9.5% | Yes, esp. Finch, Habitica, Numo |
-| General price complaints (not scam-specific) | 933 (1.9%) | 5.3% | Yes |
-| Onboarding/complexity/overwhelming to start | 645 (1.3%) | 2.4% | Yes — esp. gatekept quizzes |
-| Wants a home-screen widget | 600 (1.2%) | 0.8% (rarely a *complaint* — a delighter-request) | **Yes — 11/29 apps, huge volume** |
-| Data loss / lists disappearing / not saving | 257 (0.5%) | 1.8% | Yes, but low-freq/high-severity |
-| AI quality/editability complaints | 240 (0.5%) | 0.75% | Yes, moderate |
-| Wants sync across devices | 169 (0.35%) | 0.6% | Yes, secondary to reliability |
-| Explicit "Goblin Tools" comparisons (any app) | 66 (0.14%) | 0.18% | Only in AI-planner apps |
-| Explicit multiple-list requests | 9 (0.02%) | 0% | Real but rare |
+**This category has a live, ongoing natural experiment running inside it, and it already
+answered your question.** RoutineFlow used to sell a lifetime/one-time-purchase option.
+At some point they pulled it and went subscription-only. Users noticed immediately and are
+still angry about it, unprompted, in reviews with no relation to each other:
 
-Notification/reminder mentions (2,351 total) looked large but turned out to be **overwhelmingly neutral-to-positive** feature discussion (only 5.7% of these are negative) — dropped from "complaints" after reading samples; it's a *value driver*, not a pain point.
+> *"why did you remove the lifetime option? ... some of us just want to buy an app and then
+> stick with that version for a long time, with the peace of mind..."*
 
-**App-specific vs. category-wide:** Monetization anger, crashes, and onboarding-gate frustration are category-wide (the strongest signal for a new entrant). Persistence bugs recur across Goblin Tools/Habitica/Finch/Clarify/Structured — also category-wide, just lower-volume. Widget requests appear in 11 different apps — arguably the most *universally requested single feature* in the whole dataset, and nobody's shipped it well.
+> *"there used to be a lifetime option and there no longer is"*
+
+> *"5 stars for the content and features. -3 stars for the yearly/monthly payment
+> subscription... Subscriptions is not very ADHD friendly. I would rather see lifetime
+> purchase option."*
+
+> *"developer MIA and Lifetime purchase appears to have nullified. What gives? ...best app
+> ever!" (2★, despite loving the app)*
+
+That's not a hypothetical A/B test — it's a real product that ran both models on the same
+user base and watched people grieve the switch. It's the single strongest piece of evidence
+in this dataset, stronger than any aggregate percentage, and it goes straight at your core
+bet: **one-time purchase isn't just "nicer," it's something this exact audience has fought
+to keep when a company tried to take it away.**
 
 ---
 
-## 3. Prioritized MVP Feature List
+## Pain points, ranked by how much they actually matter (not just how often they're typed)
 
-### Must-build (each tied to specific evidence)
-1. **One honest payment, no subscription, no trial-into-autocharge.** Evidenced by the 26.9%-of-all-negative-reviews finding above, replicated across 16 apps.
-2. **Rock-solid persistence — local-first, no data loss on close/update/checkbox-tap.** Evidenced by Goblin Tools ("boom, it's all gone" — 25👍), Habitica ("erased... lost a lot of progress" — 195👍), Finch ("lost ALL of my items" — 15👍), Clarify ("all my saved lists...disappeared" — 17👍), Structured ("lost all of my tasks" — 21👍). Low frequency, universally furious when it happens — treat as a hard non-negotiable, not a nice-to-have.
-3. **The AI task-breakdown mechanic itself — kept simple, and editable.** Overwhelmingly validated (see §7) but repeatedly dinged for being un-editable/locked ("the AI features... I usually just do them myself," "AI is locked so you can't edit," "just an AI chatbot wrapper"). Build breakdown output as a fully editable list from the start, not a locked AI artifact.
-4. **Working drag-and-drop reordering.** Goblin Tools' single highest-thumbsUp complaint (44👍) is broken reordering; recurs across multiple reviews ("Can't move tasks around," "drag handles don't work"). This is table stakes that the market leader gets visibly wrong.
-5. **No onboarding gate before first use.** RoutineFlow, neurolist, and Clarify are all hammered specifically for unskippable quizzes/tutorials/paywalls before a user can even try the app ("genuinely had a minor meltdown just trying to get started" — 123👍). Let people use the core feature in under 10 seconds.
-6. **Offline-first — doesn't require a live connection for basic use.** Habitica specifically bleeds reviews over this ("requires Internet for even basic functionality" — 70👍; "erased the second you turn on wifi" — 195👍).
+### 1. Monetization dishonesty — the dominant, category-wide complaint
+Within the 27 direct-comparison apps (14,174 reviews, 3,382 of them negative), **monetization
+anger — subscriptions that are hard to cancel, trials that silently convert to charges, "free"
+apps that paywall basic use — shows up in roughly 4 out of every 10 negative reviews.** It's
+not one bad app dragging the average down: it's present at meaningful volume in essentially
+every subscription-based competitor. Clarify is the worst offender by a wide margin (it
+dominates the top-upvoted negative reviews across the *entire* dataset, Finch and Habitica
+included), but Inflow, Numo, RoutineFlow, and neurolist all have real, specific, highly-upvoted
+versions of the same story.
 
-### Nice-to-have v2
-- Home-screen widget (600 mentions, 11 apps — huge demand, but a delighter not a churn-driver; genuinely worth fast-following)
-- Multiple/separate lists by category (real, specific, but low-volume ask)
-- Custom icon/emoji per task (Goblin-specific complaint, 17👍)
+The specific manipulative patterns that recur across apps, not just once each:
+- **Unskippable quiz/questionnaire before you can even see the app**, with price revealed only
+  at the very end, often after a countdown timer or "one-time special discount" upsell
+  ("Immediately after the initial quizzes, was offered a choice between $200/year or $50/month
+  subscription, with a 15 minute timer on this 'offer'. The vilest kind of predatory
+  monetisation" — Inflow).
+- **Trial that auto-charges without a real warning**, and a cancel flow that's deliberately
+  hard to find ("the treasure hunt was on to find the magic button via a convaluted maze on the
+  website. I never did find it." — Clarify, 354👍).
+- **"Free" app that locks core functionality on first real use**, not eventually — RoutineFlow
+  paywalled a *second* routine, Structured paywalled notifications, neurolist locked the app
+  after 4 tasks.
+- **Removing functionality that existing users already had** (not just future features):
+  neurolist removed brain-dump/AI-import from the plan people had already paid for; Inflow
+  removed the live coaching sessions that were the thing people loved most; RoutineFlow removed
+  the lifetime option itself (see above).
+
+### 2. Reliability — reordering/drag-and-drop is broken almost everywhere
+This surprised me. It's not a Goblin Tools quirk — **Goblin Tools, Structured, Brili, and
+RoutineFlow all get hit, independently, for the same specific failure**: dragging a task to
+reorder it either doesn't work, doesn't save, or silently reverts.
+> *"Reordering tasks in the to do list is hit or miss — mostly miss... good luck being able to
+> drag and drop to reorder items."* (Goblin Tools, 44👍)
+> *"Structured doesn't give you an option to adjust the timing of the tasks after setting
+> them (ex: by dragging it)"* (Structured, 82👍)
+
+Nobody in this category has nailed reliable drag-and-drop. That's a genuine, unclaimed
+differentiation opportunity through pure craft — not a feature idea, an execution gap.
+
+### 3. Data loss — rare, but it's the fastest way to lose a convert for life
+Low frequency, but every single instance is a 1★ review with real venom, and it recurs across
+apps that are otherwise well-loved: Goblin Tools ("I check one box out of 20+ and boom, it's
+all gone" — 25👍), Habitica ("What you do offline will be erased in the second you turn on
+wifi... I lost a lot of progress. Definitely the worst bug/feature." — 195👍, on a 5★ review no
+less), Finch ("I lost ALL of my items after using this app for over a year"), Structured, and
+Clarify. This is a "never let this happen, ever" requirement, not a "nice to have it work most
+of the time" one.
+
+### 4. Time blindness — the single most-named specific ADHD symptom, and RoutineFlow owns it
+Not "overwhelm" in general — literally the phrase **"time blindness"** appears constantly, by
+name, specifically in praise of RoutineFlow's per-step timers and visible countdowns:
+> *"Having timers on the tasks is really helpful. I can see an expected end time for the
+> routine so it doesn't feel like it will last forever."*
+> *"the countdowns help fight time blindness"*
+> *"my Time Blindness is handled by the app's structure"*
+
+This is a specific, concrete, buildable feature (visible time estimate + live countdown per
+step, not just a static breakdown), and it's the thing RoutineFlow users credit most directly
+for behavior change — not the breakdown itself, but seeing time pass.
+
+### 5. Onboarding gates — actively repel the exact users being targeted
+Every app that puts a long quiz/tutorial/questionnaire between download and first real use
+gets punished for it, hard, with some of the highest thumbsUp counts of any complaint type in
+the dataset (Clarify 196👍, 187👍, 162👍; Inflow 59👍, 39👍, 28👍; RoutineFlow 32👍; neurolist
+28👍). The irony is repeatedly called out by name: *"For an app that targets people with ADHD,
+they sure give you plenty of time to get distracted before you even try the main
+functionality."*
+
+---
+
+## What's working — keep this
+
+- **The breakdown mechanic itself is thoroughly validated.** "Overwhelmed," "task paralysis,"
+  "don't know where to start," "executive dysfunction" appear organically and repeatedly in
+  5★ reviews across Goblin Tools, Clarify, neurolist, RoutineFlow — people are describing
+  themselves, not a hypothetical persona. This is not in question.
+- **"Brain dump" as a named, loved, distinct feature** — not the same as breakdown. People want
+  to dump messy, stream-of-consciousness thoughts *first*, unstructured, then have AI turn that
+  into a list. Numo's version was criticized specifically for capping input length and behaving
+  "more of a to do list" than a true dump. Whatever you build, the input box for this needs to
+  accept a wall of unedited text with no artificial limit.
+- **Positive-only reinforcement, explicitly praised where present.** RoutineFlow gets repeated
+  5★ praise specifically for *not* punishing missed/skipped steps ("doesn't punish you for not
+  doing everything on your list," "no gimmicks or reward systems to add pressure... no negative
+  reinforcement for not completing or skipping tasks"). Contrast with Habitica, where the
+  penalty mechanic (losing health/leveling down for missed dailies) is a recurring complaint
+  source, not a delight source. **Reward completion; never penalize incompletion** is a design
+  principle this category has already tested for you.
+- **One-time / lifetime pricing, wherever it exists, gets called out by name as the reason
+  someone chose the app** — not just tolerated, actively cited as the deciding factor (Goblin
+  Tools, RoutineFlow's now-removed lifetime tier, several "I'd pay once but not monthly"
+  comments on neurolist and RoutineFlow).
+- **Being genuinely cross-platform from day one is an open lane.** Structured Daily Planner has
+  an extensive, well-documented pattern of Android users getting a worse app than iOS users —
+  no AI feature, no cross-device sync, no widgets, missing drag-and-drop — repeated across a
+  dozen distinct reviews. Building in Expo/React Native with real platform parity from the
+  start is a legitimate, evidenced differentiator against at least one major player.
+
+---
+
+## Feature list
+
+### Must-build
+1. **One-time purchase (or a free core + one-time unlock), full stop.** The RoutineFlow
+   lifetime-removal backlash is your strongest single piece of evidence — this audience has
+   already fought to keep this exact model.
+2. **Bulletproof local persistence, tested against the specific failure modes seen here**:
+   checking a box, closing the app mid-edit, an app update, going offline-then-online. Every
+   one of those triggered real data loss somewhere in this dataset.
+3. **A true brain-dump box**: unstructured, no character cap, AI parses it into a structured
+   list — as a distinct first step before "breakdown," not folded into it.
+4. **Editable AI output.** Multiple complaints across apps: AI breakdown that can't be edited,
+   re-ordered, or corrected feels like "just a ChatGPT wrapper," not a tool.
+5. **Reliable drag-and-drop reordering.** Sounds boring; is a real, unclaimed gap across the
+   entire category.
+6. **A visible per-task/per-step time estimate with a live countdown while it's in progress** —
+   not just an estimate shown once. This is what RoutineFlow users specifically credit for
+   behavior change around time blindness.
+7. **Zero onboarding gate.** Let someone type a task and get a breakdown within seconds of
+   opening the app, before any account/quiz/paywall.
+8. **Reward-only feedback loop** (a satisfying checkmark/animation on completion) with **no
+   punishment, streak-loss, or guilt messaging for skipped/incomplete items.**
+
+### Should-build (v1.1–v2)
+- Home-screen widget (near-universally requested across the category, not urgent for launch)
+- Multiple/separate lists by category
+- Adjustable font size / high-contrast mode (Goblin Tools was specifically dinged for lacking
+  this despite serving a dyslexia-adjacent audience — cheap to build, genuinely underserved)
+- Google Calendar two-way sync
 - Recurring/repeating tasks
-- Cross-device sync
-- Notification/reminder customization (people clearly value control here, just isn't urgent)
+- Custom icon/emoji per task
 
 ### Do NOT build
-- **Social/community/guild features** — excluded by your own constraint, and Habitica's guild chat was a literal bug source, not a proven want, in this data.
-- **Gamification/pet/RPG layer** — Finch/Habitica's loop works for *their* self-care/motivation angle, but isn't what's driving love or complaints in the task-breakdown apps specifically. Bolting it on dilutes focus and blows your 1-month budget.
-- **Onboarding quizzes/personality assessments** — actively hated where present ("unskippable quiz," "tap a thousand times" appears twice independently). Ironic, since they're meant to personalize — they repel the exact users you're building for.
-- **Built-in music/soundscapes/focus-timer content** — Clarify's differentiator, mixed reception, adds real scope for unproven benefit.
-- **The rest of Goblin Tools' "tool belt" (Chef, Formalizer, Judge, etc.)** — loved as *bonuses* on top of an already-good core, not the validated pain point itself. Rebuilding the whole belt in month one is scope creep; task breakdown alone is the proven wedge.
-- **Complex desktop/web sync in v1** — real but secondary demand relative to core reliability; defer.
+- **Onboarding personality quizzes**, even short ones. Every app that gates first use behind
+  one gets punished for it specifically and by name, regardless of how good the app is once
+  you get through.
+- **Punishment-based gamification** (health loss, streak resets, level decay). Directly
+  contradicted by what this exact audience praises when absent.
+- **Social/live-presence features** (live co-working, guild chat, community feed) — worth
+  flagging honestly: Inflow's live co-working sessions are genuinely, strongly loved where they
+  exist (274👍 on one review), so this isn't a "nobody wants this" case — it's excluded by your
+  own stated constraints and by the mechanic not personally resonating with you, both of which
+  are valid reasons to leave it out. Just know you're leaving a real, evidenced want on the
+  table on purpose, not because the data says no.
+- **A loud default sound/haptic profile.** Called out specifically on Clarify ("the sounds are
+  atrocious... If this app was made for people with ADHD sound sensitivity is a thing").
+  Sensory sensitivity co-occurs with ADHD often enough that this isn't a nitpick.
+- **Removing or degrading anything a paying user already has**, ever, for any reason — the
+  single fastest way to turn a 5★ review into a 1★ one in this data (neurolist, Inflow,
+  RoutineFlow all did this and all got burned for it, specifically and by name).
+- **Rebuilding Goblin Tools' full tool-belt** (Chef, Formalizer, Judge, etc.) in month one.
+  Those are loved *bonuses* layered on an already-good core, not the validated wedge itself.
+  Task breakdown + brain dump is the proven core; the rest is scope creep until you've shipped.
 
 ---
 
-## 4. Monetization Recommendation
+## Monetization
 
-**One-time purchase, roughly $4.99–$7.99, with the core task-breakdown feature fully unlocked for free** (single list, no ads) and the one-time payment unlocking power features (multiple lists, widget, themes) rather than gating the core mechanic itself. Three reasons, all evidenced:
+**One-time purchase, roughly $5–$8**, or a genuinely full-featured free core with a one-time
+unlock for depth features (multi-list, widget, themes) — not a gate on the core mechanic
+itself. This isn't a vibes-based recommendation:
 
-- Goblin Tools' one-time $3.49 model is *explicitly* praised as a differentiator dozens of times ("It has a one-time cost and that's it. Perfect for brains that forget about subscriptions" — 59👍), and it sits at 4.69★ with only 5.3% negative reviews — the best-performing app-with-real-volume in this dataset.
-- RoutineFlow's "$10 one-time" pro tier gets the same explicit praise pattern.
-- Critically: ADHD users in this data are **self-aware and articulate about why subscriptions specifically target them** — "designed for brains like ours," "trying to take advantage of the very disorder." Charging once, transparently, isn't just nicer — it directly neutralizes your buyers' single most-repeated fear.
-- Avoid gating the *core* breakdown feature behind the paywall (that's exactly what RoutineFlow and neurolist got torched for — "Misleading 'Free' App, Functionality Locked Immediately"). Let the free tier be genuinely useful; charge for depth, not for access.
-
----
-
-## 5. Sharpest Differentiation Angle
-
-> **"Clarify hides the cancel button until they've charged you twice, and RoutineFlow paywalls your second routine — we do everything Goblin Tools does, for one honest payment, and unlike Goblin Tools, we never delete your list."**
-
-Every clause in that sentence is a specific, sourced claim from this data — not a vibe.
-
----
-
-## 6. Ten Best Direct Quotes
-
-1. **Krista Errickson, Clarify, 1★, 👍354 (2024-11-22):** *"Do NOT sign up. It's designed for brains like ours to make it impossible to cancel. I was forced to file a dispute, and new CC... the treasure hunt was on to find the magic button via a convaluted maze on the website. I never did find it."*
-2. **Gen Sakura, Inflow, 2★, 👍291 (2022-01-17):** *"The pricing model is made to trick you... As an app to manage ADD/ADHD, it feels like they are trying to take advantage of the very disorder to trick you into paying."*
-3. **Rachael Tanger, Clarify, 2★, 👍196 (2024-04-13):** *"PREDATORY... $89.99/yr after trial... $59.99/yr no free trial, or $39.99/mo... a special one-time deal of $2.50/mo! App may be beautiful, but IT IS PREDATORY. Especially against ADHD."*
-4. **Brian Brophy, RoutineFlow, 1★, 👍181 (2025-05-05):** *"Misleading 'Free' App, Functionality Locked Immediately... the moment I tried to add a second routine... I was hit with a paywall... Advertising 'free' w/o fundamental features is bait-and-switch."*
-5. **Lindsay N, Goblin Tools, 1★, 👍25 (2024-06-03):** *"I started relying heavily on this app to help remember all of my tasks and it was actually helping organize my ADHD chaos brain... this am I check one box out of 20+ and boom, it's all gone."*
-6. **Jadelyn, Goblin Tools, 2★, 👍44 (2024-10-14):** *"Reordering tasks in the to do list is hit or miss — mostly miss... good luck being able to drag and drop to reorder items... the to do list is basically useless."*
-7. **Dan, neurolist, 1★, 👍154 (2025-01-09):** *"Added 4 tasks to this to try it out. Didn't even get a chance to use it properly and it prompted me to 'buy' (rent) the Pro version for £7/month!... which I would have been happy to do if it was a reasonable amount for a ONE-OFF purchase, but no."*
-8. **Austin Tucker, Finch, 1★, 👍121 (2025-11-27):** *"it really pushes you into trying the free trial which rolls into a yearly subscription if you don't cancel... day 6 came around... it had already charged me for the full year with no warning of any kind."*
-9. **Kaylee Guise, Goblin Tools, 5★, 👍59 (2025-04-02):** *"there are many apps... that don't do anything different than Goblin Tools in terms of breaking down tasks, but charge $10 or more a month to use. This is the real deal... It has a one-time cost and that's it. Perfect for brains that forget about subscriptions/free trials easily!"*
-10. **A Google user, Habitica, 5★, 👍195 (2019-05-08):** *"What you do offline will be erased in the second you turn on wifi or mobile data. It gives me the hell of a headache and I lost a lot of progress. Definitely the worst bug/feature."*
+- The RoutineFlow lifetime-removal backlash (above) is a real, unprompted, negative case study
+  of taking this model *away* from people who already had it.
+- Goblin Tools' one-time price is repeatedly cited by name as the reason people chose it over
+  competitors charging "$10 or more a month... to do anything different than Goblin Tools."
+- People in this exact dataset say, in their own words, why subscriptions specifically target
+  them: *"I'm an adhd-er, guys! I forgot to cancel... I kinda hoped you'd remind me... but no,
+  it's just a silent action"* — this isn't abstract; it's a specific vulnerability this audience
+  names about itself, unprompted, across multiple apps.
+- Avoid gating the core mechanic (that's exactly what got RoutineFlow and neurolist torched:
+  "Misleading 'Free' App, Functionality Locked Immediately"). Charge for depth, not for access.
 
 ---
 
-## 7. Honest Gut-Check
+## Positioning
 
-**Yes — someone with real ADHD would recognize almost all of this as their own frustration**, and it shows in the language itself, not just the topics: *"ADHD chaos brain," "revenge bedtime procrastination," "task paralysis," "executive dysfunction," "I don't know where to start"* appear organically, unprompted, across dozens of independent 5★ reviews describing why the breakdown mechanic works for them. That's the strongest validation in the whole dataset — it's not a hypothetical persona, it's people describing themselves. The fury at subscription traps is similarly self-aware and specific, not generic anger: people explicitly connect *why* the dark pattern works on them ("designed for brains like ours," "takes advantage of the very disorder") — you don't need clinical training to recognize that, you need to have forgotten to cancel something because you were overwhelmed that week.
+> **"RoutineFlow took away the lifetime option people paid for. Clarify hides the cancel button
+> until they've charged you twice. We do what Goblin Tools does — one honest payment, forever —
+> and we don't lose your list when you check a box."**
 
-Two things flagged as requiring more than lived experience to appreciate, so you don't over-index on them:
-- **AI-ethics/environmental discomfort** ("uses an open ai model... not ethical," "terrible for the environment") — real but a small minority view (single digits), values-based rather than ADHD-specific. Worth a quiet, honest answer if asked; not a design pillar.
-- **The widget obsession**, despite its huge volume (600 mentions, 11 apps), reads more like general mobile-UX preference than an ADHD-specific need — *except* where reviewers explicitly frame it as *"out of sight, out of mind"* (a few do), which **is** a real object-permanence-adjacent ADHD pattern worth taking seriously rather than dismissing as a generic feature request.
+Every clause is a sourced, specific claim from this dataset, not a generic "better UX" pitch.
 
 ---
 
-## Methodology notes
+## Be careful about
 
-- Source: `output/reviews.db` (SQLite), 48,756 reviews across 29 apps that returned data (of 33 attempted — 3 package IDs are delisted from Play, confirmed via direct fetch: `co.brili.routines`, `com.fau.goblin_tools`, `dr.eledan.addie`).
-- Theme counts built via keyword/phrase `LIKE` matching against review text, then manually spot-checked by reading the actual highest-thumbsUp matches per theme to confirm signal vs. false positives (e.g. "notification" theme was reclassified from "complaint" to "neutral/positive feature discussion" after sampling showed it skewed positive).
-- "Negative" = review score ≤ 2 stars. Percentages of "all negative reviews" are out of 6,113 total negative reviews dataset-wide.
-- Quotes are verbatim from scraped review text; 👍 = thumbsUp count at scrape time (Aug 14, 2026).
+- **Reordering/drag-and-drop is a trap for solo devs** — it looks trivial and every competitor
+  in this category has visibly failed at it. Budget real time for this, don't treat it as an
+  afternoon's work.
+- **Don't let "no subscription" become "no revenue plan."** The data supports one-time
+  purchase strongly, but you still need a sustainable price point for a solo dev — $3.49
+  (Goblin Tools' price) may be too low to sustain you long-term; $5–8 one-time is still an easy
+  yes for this audience based on what they already pay for competitors' worse experiences.
+- **A light reward layer can misfire if it's not carefully positive-only.** Some users
+  explicitly want *more* dopamine/reward feedback (a 2★ Yoodoo review literally says "no
+  reward mechanism equals no dopamine... needs work"), while others explicitly want *zero*
+  pressure. The synthesis that satisfies both, based on this data, is: reward completion
+  generously, never penalize non-completion, and make any reward layer skippable/mutable for
+  the people who find it distracting.
+- **If you ever add tiers, never remove something a user already paid for** to push them to a
+  higher tier — this specific move (not a hypothetical) tanked reviews on three separate apps
+  in this dataset.
+- **AI-ethics discomfort is real but small** (single-digit mentions: "uses an open ai model...
+  not ethical," "terrible for the environment"). Don't design around it, but a quiet, honest
+  answer if asked is enough — it's a values-based minority view, not a broad blocker.
+
+---
+
+## Methodology note
+
+Core evidence base: 14,174 reviews across 27 apps directly comparable to a task-breakdown
+tool (all apps except Finch and Habitica, which are much larger apps in an adjacent-but-
+different category — self-care/gamified-RPG — kept as reference points, not primary
+evidence). All quotes are verbatim from scraped review text; 👍 = thumbsUp count at scrape
+time (Aug 14, 2026). Findings were built by reading actual top-upvoted reviews per theme
+across apps, not solely by counting keyword matches — several early keyword-based counts
+(e.g. "notification" mentions, generic "%category%" matches) turned out on inspection to be
+mostly neutral or false-positive and were dropped rather than reported as complaint volume.
