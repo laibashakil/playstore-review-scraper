@@ -1,0 +1,15 @@
+{
+  "name": "playstore-review-scraper",
+  "version": "1.0.0",
+  "description": "Scrapes Google Play app metadata + reviews into a local SQLite database for product research",
+  "private": true,
+  "main": "scrape.js",
+  "scripts": {
+    "scrape": "node scrape.js",
+    "query": "node query.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^13.0.3",
+    "google-play-scraper": "^9.0.0"
+  }
+}
